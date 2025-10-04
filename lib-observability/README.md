@@ -78,7 +78,7 @@ observability:
   
   controller:
     enabled: true  # Habilita logging de controllers (padrão: true)
-    base-package: "com.sua.empresa.*.controller..*"  # Customiza o package pattern
+    base-packages: "com.sua.empresa.*.controller..*"  # Customiza o package pattern
   
   service:
     enabled: true  # Habilita logging de services (padrão: true)
