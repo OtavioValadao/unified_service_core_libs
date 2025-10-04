@@ -50,7 +50,6 @@ import java.util.regex.Pattern;
 @Aspect
 @Component
 @Slf4j
-@Lazy
 public class ControllerLoggingAspect {
 
     /**

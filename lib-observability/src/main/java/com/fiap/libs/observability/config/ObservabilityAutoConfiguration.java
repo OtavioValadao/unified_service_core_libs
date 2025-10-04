@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Auto-configuration for Observability Library.
@@ -39,6 +40,7 @@ public class ObservabilityAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "observability.controller", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @Lazy
     public ControllerLoggingAspect controllerLoggingAspect() {
         log.info("✓ [OBSERVABILITY] ControllerLoggingAspect enabled - Logging all controller requests");
         return new ControllerLoggingAspect();
