@@ -14,10 +14,10 @@
     <description>Core libraries for unified services - FIAP</description>
 
     <modules>
+        <module>lib-bom</module>  <!-- Move BOM to first position -->
         <module>lib-observability</module>
         <module>lib-exception-handler</module>
         <module>unified-service-core-starter</module>
-        <module>lib-bom</module>
     </modules>
 
     <properties>
@@ -30,7 +30,7 @@
         <spring.boot.version>3.2.0</spring.boot.version>
         <lombok.version>1.18.30</lombok.version>
         <aspectj.version>1.9.21</aspectj.version>
-        
+
         <!-- Versionamento das libs -->
         <lib.version>1.0.0</lib.version>
     </properties>
@@ -45,6 +45,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Import our own BOM -->
+            <dependency>
+                <groupId>com.github.OtavioValadao</groupId>
+                <artifactId>lib-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -56,8 +65,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
                 </plugin>
-                
-                <!-- Plugin para versionamento automático -->
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -67,8 +75,7 @@
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
-                
-                <!-- Plugin para deploy no GitHub Packages -->
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
