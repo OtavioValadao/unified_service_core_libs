@@ -385,4 +385,22 @@ public class ClientErrorHandler extends BaseExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        String traceId = generateTraceId();
+        log.error("[{}] Internal server error", traceId, ex);
+
+        ErrorResponse error = buildErrorResponse(
+                ErrorCode.INTERNAL_SERVER_ERROR,
+                "An unexpected error occurred",
+                request.getRequestURI(),
+                traceId
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
 }

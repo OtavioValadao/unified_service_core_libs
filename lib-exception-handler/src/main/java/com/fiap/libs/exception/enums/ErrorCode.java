@@ -17,7 +17,8 @@ public enum ErrorCode {
     TOO_MANY_REQUESTS("ERR_015", "Too Many Requests"),
     PAYLOAD_TOO_LARGE("ERR_016", "Payload Too Large"),
     UNSUPPORTED_MEDIA_TYPE("ERR_017", "Unsupported Media Type"),
-    METHOD_NOT_ALLOWED("ERR_018", "Method Not Allowed");
+    METHOD_NOT_ALLOWED("ERR_018", "Method Not Allowed"),
+    INTERNAL_SERVER_ERROR("ERR_050", "Internal Server Error");
 
 
     private final String code;
