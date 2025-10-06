@@ -47,7 +47,7 @@ git push origin v1.1.0
     <dependencies>
         <dependency>
             <groupId>com.github.OtavioValadao</groupId>
-            <artifactId>unified-service-core-libs</artifactId>
+            <artifactId>lib-bom</artifactId>
             <version>1.0.0</version>
             <type>pom</type>
             <scope>import</scope>
