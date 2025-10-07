@@ -14,10 +14,8 @@
     <description>Core libraries for unified services - FIAP</description>
 
     <modules>
-        <module>lib-bom</module>  <!-- Move BOM to first position -->
         <module>lib-observability</module>
         <module>lib-exception-handler</module>
-        <module>unified-service-core-starter</module>
     </modules>
 
     <properties>
@@ -42,15 +40,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Import our own BOM -->
-            <dependency>
-                <groupId>com.github.OtavioValadao</groupId>
-                <artifactId>lib-bom</artifactId>
-                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
