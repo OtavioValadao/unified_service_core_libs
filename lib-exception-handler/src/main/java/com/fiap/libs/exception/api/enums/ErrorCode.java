@@ -1,4 +1,4 @@
-package com.fiap.libs.exception.enums;
+package com.fiap.libs.exception.api.enums;
 
 import lombok.Getter;
 

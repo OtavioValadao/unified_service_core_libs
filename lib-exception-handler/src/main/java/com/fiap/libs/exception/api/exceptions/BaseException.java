@@ -1,6 +1,6 @@
-package com.fiap.libs.exception.handler;
+package com.fiap.libs.exception.api.exceptions;
 
-import com.fiap.libs.exception.enums.ErrorCode;
+import com.fiap.libs.exception.api.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

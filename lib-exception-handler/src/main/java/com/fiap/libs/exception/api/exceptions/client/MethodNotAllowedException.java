@@ -1,7 +1,7 @@
-package com.fiap.libs.exception.exceptions;
+package com.fiap.libs.exception.api.exceptions.client;
 
-import com.fiap.libs.exception.enums.ErrorCode;
-import com.fiap.libs.exception.handler.BaseException;
+import com.fiap.libs.exception.api.enums.ErrorCode;
+import com.fiap.libs.exception.api.exceptions.BaseException;
 
 public class MethodNotAllowedException extends BaseException {
     

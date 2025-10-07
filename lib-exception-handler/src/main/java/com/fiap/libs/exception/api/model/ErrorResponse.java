@@ -1,8 +1,8 @@
-package com.fiap.libs.exception.model;
+package com.fiap.libs.exception.api.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fiap.libs.exception.enums.ErrorCode;
+import com.fiap.libs.exception.api.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class ErrorResponse {
     private String traceId;
 
     // Lista de erros de validação (opcional)
-    private List<CustomFiledError> errors;
+    private List<CustomFieldError> errors;
 
     // Metadados adicionais (opcional)
     private Map<String, Object> metadata;
