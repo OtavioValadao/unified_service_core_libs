@@ -7,7 +7,7 @@
 
     <groupId>com.github.OtavioValadao</groupId>
     <artifactId>unified-service-core-libs</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.14</version>
     <packaging>pom</packaging>
 
     <name>Unified Service Core Libraries</name>
@@ -30,7 +30,7 @@
         <aspectj.version>1.9.21</aspectj.version>
 
         <!-- Versionamento das libs -->
-        <lib.version>1.0.0</lib.version>
+        <lib.version>1.0.13</lib.version>
     </properties>
 
     <dependencyManagement>
