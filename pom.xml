@@ -7,7 +7,7 @@
 
     <groupId>com.github.OtavioValadao</groupId>
     <artifactId>unified-service-core-libs</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
     <packaging>pom</packaging>
 
     <name>Unified Service Core Libraries</name>

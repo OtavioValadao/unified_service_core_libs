@@ -2,7 +2,10 @@ package com.fiap.libs.observability.config;
 
 import com.fiap.libs.observability.aspect.HttpLoggingAspect;
 import com.fiap.libs.observability.aspect.OperationLoggingAspect;
+import com.fiap.libs.observability.utils.LoggingUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,9 +34,13 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Slf4j
 public class ObservabilityAutoConfiguration {
 
-    public ObservabilityAutoConfiguration() {
-        log.info("🔍 [OBSERVABILITY] Initializing FIAP Observability Library v2.0.0");
-        log.info("📦 [OBSERVABILITY] Architecture-agnostic logging enabled");
+    @Value("${observability.log.json-pretty-print:false}")
+    private boolean jsonPrettyPrintEnabled;
+
+    @PostConstruct
+    public void init() {
+        LoggingUtils.setPrettyPrintEnabled(jsonPrettyPrintEnabled);
+        log.info("✓ [OBSERVABILITY] Library initialized - JSON pretty print: {}", jsonPrettyPrintEnabled);
     }
 
     @Bean

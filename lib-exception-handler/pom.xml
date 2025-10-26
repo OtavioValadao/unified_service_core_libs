@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.github.OtavioValadao</groupId>
         <artifactId>unified-service-core-libs</artifactId>
-        <version>1.0.14</version>
+        <version>1.0.15</version>
     </parent>
 
     <artifactId>lib-exception-handler</artifactId>

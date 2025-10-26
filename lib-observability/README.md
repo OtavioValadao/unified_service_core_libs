@@ -7,15 +7,15 @@ Biblioteca de observabilidade arquiteturalmente agnóstica para aplicações Spr
 ### Maven
 ```xml
 <dependency>
-    <groupId>com.github.OtavioValadao.unified-service-core-libs</groupId>
+    <groupId>com.github.OtavioValadao</groupId>
     <artifactId>lib-observability</artifactId>
-    <version>v2.0.0</version>
+    <version>1.0.15</version>
 </dependency>
 ```
 
 ### Gradle
 ```gradle
-implementation 'com.github.OtavioValadao.unified-service-core-libs:lib-observability:v2.0.0'
+implementation 'com.github.OtavioValadao:lib-observability:1.0.15'
 ```
 
 ## 🚀 Uso
@@ -126,14 +126,19 @@ public class UserService {
 observability:
   enabled: true  # Habilita/desabilita toda a lib (padrão: true)
   
+  log:
+    json-pretty-print: false  # Habilita JSON formatado com quebras de linha (padrão: false)
+  
   http:
     enabled: true           # Habilita logging HTTP (padrão: true)
     max-length: 200         # Tamanho máximo de args/result nos logs (padrão: 200)
+                            # Use 0 ou valor negativo para SEM LIMITE (log completo)
     order: -999000          # Ordem de execução do aspect (padrão: LOWEST_PRECEDENCE - 1000)
   
   operation:
     enabled: true           # Habilita logging de operações (padrão: true)
     max-length: 200         # Tamanho máximo de args/result nos logs (padrão: 200)
+                            # Use 0 ou valor negativo para SEM LIMITE (log completo)
     order: -999500          # Ordem de execução do aspect (padrão: LOWEST_PRECEDENCE - 500)
 ```
 
@@ -150,6 +155,10 @@ observability.http.max-length=500
 # Configurar apenas operações
 observability.operation.enabled=true
 observability.operation.max-length=300
+
+# Desabilitar truncamento (log completo sem limite)
+observability.http.max-length=0
+observability.operation.max-length=0
 ```
 
 ---
@@ -165,8 +174,75 @@ observability.operation.max-length=300
 - **Performance Tracking**: Mede tempo de execução em milissegundos
 - **Error Handling**: Captura e loga exceções automaticamente
 - **Logs Estruturados**: Formato padronizado e legível com emojis
+- **Formato JSON**: Argumentos e resultados são logados em formato JSON
 - **Configurável**: Customize via properties sem alterar código
 - **Truncamento Inteligente**: Limita tamanho dos logs para não degradar performance
+
+### 📊 Formato JSON Automático
+
+A biblioteca automaticamente serializa objetos em formato JSON para melhor legibilidade:
+
+**Exemplo (JSON compacto - padrão):**
+```
+⏰ [▶ START] Criar usuário → args: [{"name":"João Silva","email":"joao@email.com","role":"USER"}]
+✅ [✓ SUCCESS] Criar usuário ✓ 89ms → result: {"id":123,"name":"João Silva","email":"joao@email.com","createdAt":"2025-01-15T10:30:00"}
+```
+
+**Exemplo (JSON formatado - pretty print):**
+
+Habilite no `application.yml`:
+```yaml
+observability:
+  log:
+    json-pretty-print: true
+  http:
+    max-length: 2000  # Aumente para acomodar JSONs formatados
+  operation:
+    max-length: 2000
+```
+
+Log resultante:
+```
+⏰ [▶ START] Criar veículo → args: [{
+  "id": 0,
+  "plate": "VGS8444",
+  "model": {
+    "id": 0,
+    "brand": "Toyota",
+    "model": "Corolla",
+    "clientCpfCnpj": "12345678900",
+    "year": 2024
+  },
+  "clientCpfCnpj": "12345678900"
+}]
+```
+
+### 🔄 Desabilitar Truncamento (Log Completo)
+
+Se quiser logar objetos **sem limite de tamanho**:
+
+```yaml
+observability:
+  log:
+    json-pretty-print: true  # ou false
+  http:
+    max-length: 0  # 👈 0 ou valor negativo = SEM LIMITE
+  operation:
+    max-length: 0  # 👈 Logs completos sem truncamento
+```
+
+**Quando usar:**
+- ✅ Debugging de objetos complexos muito grandes
+- ✅ Desenvolvimento local com logs detalhados
+- ⚠️ Cuidado em produção: logs muito grandes podem degradar performance
+
+**Benefícios:**
+- ✅ Logs mais legíveis e estruturados
+- ✅ Fácil parsing por ferramentas de monitoramento (ELK, Splunk, etc)
+- ✅ Suporte a datas no formato ISO-8601
+- ✅ Sanitização automática de dados sensíveis em JSON
+- ✅ Fallback automático para toString() em caso de erro na serialização
+- ✅ Pretty print opcional para debugging em desenvolvimento
 
 ### 🔒 Segurança
 
@@ -193,7 +269,7 @@ A biblioteca **automaticamente sanitiza** dados sensíveis nos logs:
 | `value` | String | "" | Descrição customizada do endpoint |
 | `logArgs` | boolean | true | Se deve logar parâmetros da requisição |
 | `logResult` | boolean | true | Se deve logar o response body |
-| `maxLength` | int | -1 | Tamanho máximo do log (-1 = usa config global) |
+| `maxLength` | int | -1 | Tamanho máximo do log (-1 = usa config global, 0 = sem limite) |
 
 ### @LogOperation
 
@@ -202,7 +278,7 @@ A biblioteca **automaticamente sanitiza** dados sensíveis nos logs:
 | `value` | String | "" | Descrição da operação (vazio = usa nome do método) |
 | `logArgs` | boolean | true | Se deve logar argumentos do método |
 | `logResult` | boolean | true | Se deve logar o valor de retorno |
-| `maxLength` | int | -1 | Tamanho máximo do log (-1 = usa config global) |
+| `maxLength` | int | -1 | Tamanho máximo do log (-1 = usa config global, 0 = sem limite) |
 
 ---
 
