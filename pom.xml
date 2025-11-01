@@ -8,7 +8,7 @@
 
     <groupId>com.github.OtavioValadao</groupId>
     <artifactId>unified-service-core-libs</artifactId>
-    <version>1.0.17</version>
+    <version>1.4.1</version>
     <packaging>pom</packaging>
 
     <name>Unified Service Core Libraries</name>
@@ -19,6 +19,7 @@
         <module>lib-observability</module>
         <module>lib-exception-handler</module>
         <module>lib-code-gen</module>
+        <module>lib-send-notification</module>
     </modules>
 
     <!-- ====================== PROPRIEDADES ====================== -->

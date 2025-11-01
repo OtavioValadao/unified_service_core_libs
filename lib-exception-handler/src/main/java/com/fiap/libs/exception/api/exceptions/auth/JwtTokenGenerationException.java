@@ -4,11 +4,11 @@ import com.fiap.libs.exception.api.enums.ErrorCode;
 import com.fiap.libs.exception.api.exceptions.BaseException;
 
 public class JwtTokenGenerationException extends BaseException {
-    protected JwtTokenGenerationException(String message, ErrorCode errorCode) {
+    public JwtTokenGenerationException(String message, ErrorCode errorCode) {
         super(message, errorCode);
     }
 
-    protected JwtTokenGenerationException(String message, ErrorCode errorCode, Throwable cause) {
+    public JwtTokenGenerationException(String message, ErrorCode errorCode, Throwable cause) {
         super(message, errorCode, cause);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 public class CodeGenAutoConfiguration {
 
     public CodeGenAutoConfiguration() {
-        log.info("📝 [CODE-GEN] Initializing FIAP Code Generation Library v1.0.15");
+        log.info("📝 [CODE-GEN] Initializing FIAP Code Generation Library");
     }
 
 }

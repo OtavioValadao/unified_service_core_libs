@@ -5,11 +5,11 @@ import com.fiap.libs.exception.api.exceptions.BaseException;
 
 public class ExpiredJwtTokenException extends BaseException {
 
-    protected ExpiredJwtTokenException(String message, ErrorCode errorCode) {
+    public ExpiredJwtTokenException(String message, ErrorCode errorCode) {
         super(message, errorCode);
     }
 
-    protected ExpiredJwtTokenException(String message, Throwable cause) {
+    public ExpiredJwtTokenException(String message, Throwable cause) {
         super(message, ErrorCode.BAD_REQUEST, cause);
     }
 }

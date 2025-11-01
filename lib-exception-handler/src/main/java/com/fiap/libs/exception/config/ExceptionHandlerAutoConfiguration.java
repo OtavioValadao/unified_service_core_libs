@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Import;
 public class ExceptionHandlerAutoConfiguration {
 
     public ExceptionHandlerAutoConfiguration() {
-        log.info("🔍 [EXCEPTION-HANDLER] Initializing FIAP handler Library v1.0.0");
+        log.info("🔍 [EXCEPTION-HANDLER] Initializing FIAP handler Library");
     }
 
 }

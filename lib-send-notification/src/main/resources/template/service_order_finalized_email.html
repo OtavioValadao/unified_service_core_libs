@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OS Finalizada</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f7fb; margin: 0; padding: 24px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #16a34a; }
+        p { color: #111827; line-height: 1.5; }
+        .info { background: #f1f5f9; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .label { color: #6b7280; font-weight: bold; }
+        .footer { margin-top: 20px; font-size: 12px; color: #6b7280; }
+        .cta { display: inline-block; margin-top: 16px; padding: 12px 16px; background: #16a34a; color: #fff; text-decoration: none; border-radius: 6px; }
+    </style>
+    </head>
+<body>
+<div class="container">
+    <h1>OS pronta para retirada 🎉</h1>
+    <p>Olá, {{cliente}}!</p>
+    <p>Sua Ordem de Serviço <strong>{{osNumero}}</strong> foi finalizada em <strong>{{dataFinalizacao}}</strong>.</p>
+    <div class="info">
+        <div><span class="label">Veículo:</span> {{veiculo}}</div>
+        <div><span class="label">Situação:</span> Serviços concluídos. Aguardando retirada.</div>
+    </div>
+    <p>Você já pode buscar o veículo em nossa oficina. Caso precise reagendar a retirada, é só nos avisar.</p>
+    <a class="cta" href="#">Ver detalhes da OS</a>
+    <div class="footer">
+        Se você não reconhece esta solicitação, desconsidere este e-mail e entre em contato conosco.
+    </div>
+</div>
+</body>
+</html>
+
+

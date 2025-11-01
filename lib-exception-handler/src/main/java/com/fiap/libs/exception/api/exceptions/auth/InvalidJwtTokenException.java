@@ -5,11 +5,11 @@ import com.fiap.libs.exception.api.exceptions.BaseException;
 
 public class InvalidJwtTokenException extends BaseException {
 
-    protected InvalidJwtTokenException(String message, ErrorCode errorCode) {
+    public InvalidJwtTokenException(String message, ErrorCode errorCode) {
         super(message, errorCode);
     }
 
-    protected InvalidJwtTokenException(String message, ErrorCode errorCode, Throwable cause) {
+    public InvalidJwtTokenException(String message, ErrorCode errorCode, Throwable cause) {
         super(message, errorCode, cause);
     }
 }
