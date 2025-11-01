@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Import;
 @Slf4j
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Import({
-        ExceptionMetadataRegistry.class,  // ← Registra primeiro o Registry
-        ClientErrorHandler.class          // ← Depois o Handler (que depende do Registry)
+        ExceptionMetadataRegistry.class,
+        ClientErrorHandler.class
 })
 public class ExceptionHandlerAutoConfiguration {
 
