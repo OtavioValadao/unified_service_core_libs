@@ -9,6 +9,7 @@
         <groupId>com.github.OtavioValadao</groupId>
         <artifactId>unified-service-core-libs</artifactId>
         <version>1.0.16</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>lib-observability</artifactId>
