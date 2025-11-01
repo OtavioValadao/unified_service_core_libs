@@ -40,7 +40,6 @@ public class ObservabilityAutoConfiguration {
     @PostConstruct
     public void init() {
         LoggingUtils.setPrettyPrintEnabled(jsonPrettyPrintEnabled);
-        log.info("✓ [OBSERVABILITY] Library initialized - JSON pretty print: {}", jsonPrettyPrintEnabled);
     }
 
     @Bean

@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.OtavioValadao</groupId>
@@ -13,28 +14,50 @@
     <name>Unified Service Core Libraries</name>
     <description>Core libraries for unified services - FIAP</description>
 
+    <!-- ====================== MÓDULOS ====================== -->
     <modules>
         <module>lib-observability</module>
         <module>lib-exception-handler</module>
+        <module>lib-code-gen</module>
     </modules>
 
+    <!-- ====================== PROPRIEDADES ====================== -->
     <properties>
         <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Versões centralizadas -->
-        <spring.boot.version>3.2.0</spring.boot.version>
-        <lombok.version>1.18.30</lombok.version>
+        <!-- Spring Boot & Core -->
+        <spring.boot.version>3.5.5</spring.boot.version>
+        <lombok.version>1.18.32</lombok.version>
         <aspectj.version>1.9.21</aspectj.version>
 
-        <!-- Versionamento das libs -->
-        <lib.version>1.0.13</lib.version>
+        <!-- Code Generation & Utilities -->
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+
+        <!-- Reporting -->
+        <jasperreports.version>6.20.6</jasperreports.version>
+        <itext.version>2.1.7</itext.version>
+
+        <!-- OpenAPI / Swagger -->
+        <springdoc.version>2.8.13</springdoc.version>
+        <swagger-parser.version>2.1.35</swagger-parser.version>
+        <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+
+        <!-- Plugins -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+
+        <!-- Versão das libs internas -->
+        <lib.version>1.0.16</lib.version>
     </properties>
 
+    <!-- ====================== GERENCIAMENTO DE DEPENDÊNCIAS ====================== -->
     <dependencyManagement>
         <dependencies>
+
             <!-- Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -43,18 +66,122 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- MapStruct -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <!-- Utilities -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- Reporting -->
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports</artifactId>
+                <version>${jasperreports.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lowagie</groupId>
+                <artifactId>itext</artifactId>
+                <version>${itext.version}</version>
+            </dependency>
+
+            <!-- OpenAPI / Swagger -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.parser.v3</groupId>
+                <artifactId>swagger-parser</artifactId>
+                <version>${swagger-parser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jackson-databind-nullable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+
+            <!-- AspectJ -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
+    <!-- ====================== DEPENDÊNCIAS COMUNS ====================== -->
+    <dependencies>
+        <!-- Lombok (compilação) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Logging comum (SLF4J) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- ====================== BUILD / PLUGIN MANAGEMENT ====================== -->
     <build>
         <pluginManagement>
             <plugins>
+
+                <!-- Maven Compiler Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
                 </plugin>
 
+                <!-- Maven Release Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -65,12 +192,15 @@
                     </configuration>
                 </plugin>
 
+                <!-- Maven Deploy Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>3.1.1</version>
                 </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
+
 </project>
