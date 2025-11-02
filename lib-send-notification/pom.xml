@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.OtavioValadao</groupId>
             <artifactId>lib-observability</artifactId>
-            <version>1.4.1</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
