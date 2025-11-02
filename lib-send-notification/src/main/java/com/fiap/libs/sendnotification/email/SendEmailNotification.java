@@ -2,8 +2,8 @@ package com.fiap.libs.sendnotification.email;
 
 import com.fiap.libs.observability.annotation.LogOperation;
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
-import com.fiap.libs.sendnotification.email.dto.ClientDto;
-import com.fiap.libs.sendnotification.email.dto.ServiceOrderDto;
+import com.fiap.libs.sendnotification.email.dto.CustomerRecord;
+import com.fiap.libs.sendnotification.email.dto.ServiceOrderRecord;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class SendEmailNotification {
     private final LoadTemplateConfig loadTemplateConfig;
 
     @LogOperation("Send email notification welcome")
-    public void sendEmailWelcome(ClientDto client) {
+    public void sendEmailWelcome(CustomerRecord client) {
         CompletableFuture.runAsync(() -> {
             try {
                 String template = loadTemplateConfig.loadTemplate(WELCOME_TEMPLATE_PATH);
@@ -52,7 +52,7 @@ public class SendEmailNotification {
     }
 
     @LogOperation("Send service order finalized email")
-    public void sendServiceOrderFinalizedEmail(ServiceOrderDto serviceOrder) {
+    public void sendServiceOrderFinalizedEmail(ServiceOrderRecord serviceOrder) {
         CompletableFuture.runAsync(() -> {
             try {
                 var client = serviceOrder.client();
@@ -62,10 +62,10 @@ public class SendEmailNotification {
                 String completionDate = (serviceOrder.completionDate());
 
                 String vehicleInfo = String.format("%s %s (%d) - Placa: %s",
-                        serviceOrder.vehicleDto().model().brand(),
-                        serviceOrder.vehicleDto().model().model(),
-                        serviceOrder.vehicleDto().model().year(),
-                        serviceOrder.vehicleDto().plate());
+                        serviceOrder.vehicleRecord().model().brand(),
+                        serviceOrder.vehicleRecord().model().model(),
+                        serviceOrder.vehicleRecord().model().year(),
+                        serviceOrder.vehicleRecord().plate());
 
                 htmlBody = htmlBody
                         .replace(CLIENT, client.nickName())

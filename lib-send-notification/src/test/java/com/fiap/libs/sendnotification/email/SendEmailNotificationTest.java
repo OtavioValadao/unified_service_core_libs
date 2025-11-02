@@ -1,10 +1,10 @@
 package com.fiap.libs.sendnotification.email;
 
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
-import com.fiap.libs.sendnotification.email.dto.ClientDto;
-import com.fiap.libs.sendnotification.email.dto.ModelDto;
-import com.fiap.libs.sendnotification.email.dto.ServiceOrderDto;
-import com.fiap.libs.sendnotification.email.dto.VehicleDto;
+import com.fiap.libs.sendnotification.email.dto.CustomerRecord;
+import com.fiap.libs.sendnotification.email.dto.ModelRecord;
+import com.fiap.libs.sendnotification.email.dto.ServiceOrderRecord;
+import com.fiap.libs.sendnotification.email.dto.VehicleRecord;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class SendEmailNotificationTest {
     @Test
     void shouldSendWelcomeEmail_successfully() throws Exception {
         // Given
-        ClientDto client = new ClientDto(
+        CustomerRecord client = new CustomerRecord(
                 "John Doe",
                 "test@example.com"
         );
@@ -64,23 +64,23 @@ class SendEmailNotificationTest {
     @Test
     void shouldSendServiceOrderFinalizedEmail_successfully() throws Exception {
         // Given
-        ClientDto client = new ClientDto(
+        CustomerRecord client = new CustomerRecord(
                 "Jane Smith",
                 "client@example.com"
         );
 
-        ModelDto model = new ModelDto(
+        ModelRecord model = new ModelRecord(
                 2023,
                 "Corolla",
                 "Toyota"
         );
 
-        VehicleDto vehicle = new VehicleDto(
+        VehicleRecord vehicle = new VehicleRecord(
                 "ABC-1234",
                 model
         );
 
-        ServiceOrderDto serviceOrder = new ServiceOrderDto(
+        ServiceOrderRecord serviceOrder = new ServiceOrderRecord(
                 "OS-12345",
                 client,
                 vehicle,
@@ -104,7 +104,7 @@ class SendEmailNotificationTest {
     @Test
     void shouldHandleInvalidEmailGracefully() throws Exception {
         // Given
-        ClientDto clientWithInvalidEmail = new ClientDto(
+        CustomerRecord clientWithInvalidEmail = new CustomerRecord(
                 "Invalid User",
                 "invalid-email"
         );
@@ -123,7 +123,7 @@ class SendEmailNotificationTest {
     @Test
     void shouldLoadTemplate_whenSendingEmail() throws Exception {
         // Given
-        ClientDto client = new ClientDto(
+        CustomerRecord client = new CustomerRecord(
                 "Template Test",
                 "template@example.com"
         );
@@ -144,7 +144,7 @@ class SendEmailNotificationTest {
     @Test
     void shouldHandleTemplateLoadingException() throws Exception {
         // Given
-        ClientDto client = new ClientDto(
+        CustomerRecord client = new CustomerRecord(
                 "Test User",
                 "test@example.com"
         );

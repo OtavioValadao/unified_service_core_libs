@@ -1,7 +1,16 @@
 package com.fiap.libs.exception.core.registry;
 
-import com.fiap.libs.exception.api.exceptions.client.*;
-import com.fiap.libs.exception.core.factory.*;
+import com.fiap.libs.exception.api.exceptions.auth.ExpiredJwtTokenException;
+import com.fiap.libs.exception.api.exceptions.auth.InvalidJwtTokenException;
+import com.fiap.libs.exception.api.exceptions.auth.JwtTokenGenerationException;
+import com.fiap.libs.exception.api.exceptions.auth.TokenRevocationException;
+import com.fiap.libs.exception.api.exceptions.request.*;
+import com.fiap.libs.exception.api.exceptions.resource.ResourceAlreadyExistsException;
+import com.fiap.libs.exception.api.exceptions.resource.ResourceNotFoundException;
+import com.fiap.libs.exception.api.exceptions.validation.InvalidFormatException;
+import com.fiap.libs.exception.api.exceptions.validation.InvalidParameterException;
+import com.fiap.libs.exception.api.exceptions.validation.MissingRequiredFieldException;
+import com.fiap.libs.exception.api.exceptions.validation.ValidationException;
 import com.fiap.libs.exception.core.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -26,12 +35,10 @@ public class ExceptionMetadataRegistry {
      * Registra metadados para todas as exceções customizadas
      */
     private void registerAllExceptions() {
-        // 404 - Not Found
         this.register(ResourceNotFoundException.class,
                 HttpStatus.NOT_FOUND,
                 LogLevel.WARN);
 
-        // 400 - Bad Request
         this.register(BadRequestException.class,
                 HttpStatus.BAD_REQUEST,
                 LogLevel.ERROR);
@@ -48,39 +55,53 @@ public class ExceptionMetadataRegistry {
                 HttpStatus.BAD_REQUEST,
                 LogLevel.ERROR);
 
-        // 409 - Conflict
         this.register(ResourceAlreadyExistsException.class,
                 HttpStatus.CONFLICT,
                 LogLevel.WARN);
 
-        this.register(ConflictException.class,
-                HttpStatus.CONFLICT,
-                LogLevel.WARN);
-
-        // 415 - Unsupported Media Type
         this.register(UnsupportedMediaTypeException.class,
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE,
                 LogLevel.ERROR);
 
-        // 405 - Method Not Allowed
         this.register(MethodNotAllowedException.class,
                 HttpStatus.METHOD_NOT_ALLOWED,
                 LogLevel.ERROR);
 
-        // 422 - Unprocessable Entity
         this.register(InvalidParameterException.class,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 LogLevel.ERROR);
 
-        // 413 - Payload Too Large
         this.register(PayloadTooLargeException.class,
                 HttpStatus.PAYLOAD_TOO_LARGE,
                 LogLevel.WARN);
 
-        // 429 - Too Many Requests
         this.register(TooManyRequestsException.class,
                 HttpStatus.TOO_MANY_REQUESTS,
                 LogLevel.WARN);
+
+        this.register(
+                ExpiredJwtTokenException.class,
+                HttpStatus.UNAUTHORIZED,
+                LogLevel.WARN
+        );
+
+        this.register(
+                InvalidJwtTokenException.class,
+                HttpStatus.UNAUTHORIZED,
+                LogLevel.ERROR
+        );
+
+        this.register(
+                JwtTokenGenerationException.class,
+                HttpStatus.UNAUTHORIZED,
+                LogLevel.ERROR
+        );
+
+        this.register(
+                TokenRevocationException.class,
+                HttpStatus.UNAUTHORIZED,
+                LogLevel.ERROR
+        );
     }
 
     /**
@@ -113,6 +134,6 @@ public class ExceptionMetadataRegistry {
      * Retorna todas as exceções registradas
      */
     public Map<Class<? extends Exception>, ExceptionMetadata> getAllRegistrations() {
-        return new HashMap<>(registry); // Cópia para evitar modificações
+        return new HashMap<>(registry);
     }
 }

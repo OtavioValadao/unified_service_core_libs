@@ -3,10 +3,10 @@ package com.fiap.libs.sendnotification.email.dto;
 import lombok.Builder;
 
 @Builder
-public record ServiceOrderDto(
+public record ServiceOrderRecord(
         String orderNumber,
-        ClientDto client,
-        VehicleDto vehicleDto,
+        CustomerRecord client,
+        VehicleRecord vehicleRecord,
         String completionDate
 ) {
 }

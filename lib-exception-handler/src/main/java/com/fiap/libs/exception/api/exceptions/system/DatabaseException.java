@@ -1,4 +1,4 @@
-package com.fiap.libs.exception.api.exceptions.client;
+package com.fiap.libs.exception.api.exceptions.system;
 
 import com.fiap.libs.exception.api.enums.ErrorCode;
 import com.fiap.libs.exception.api.exceptions.BaseException;
