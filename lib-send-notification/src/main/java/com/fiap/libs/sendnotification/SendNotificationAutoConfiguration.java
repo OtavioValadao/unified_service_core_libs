@@ -2,7 +2,6 @@ package com.fiap.libs.sendnotification;
 
 import com.fiap.libs.sendnotification.email.SendEmailNotification;
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -15,15 +14,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Slf4j
 public class SendNotificationAutoConfiguration {
 
-    @PostConstruct
-    public void init() {
-        log.info("🚀 [SEND-NOTIFICATION] Auto-configuration initialized successfully.");
-    }
 
     @Bean
     @ConditionalOnMissingBean
     public LoadTemplateConfig loadTemplateConfig(ResourceLoader resourceLoader) {
-        log.debug("Creating LoadTemplateConfig bean");
         return new LoadTemplateConfig(resourceLoader);
     }
 
@@ -33,7 +27,7 @@ public class SendNotificationAutoConfiguration {
     public SendEmailNotification sendEmailNotification(
             JavaMailSender mailSender,
             LoadTemplateConfig loadTemplateConfig) {
-        log.debug("Creating SendEmailNotification bean");
+        log.info("🚀 [SEND-NOTIFICATION] Auto-configuration initialized successfully.");
         return new SendEmailNotification(mailSender, loadTemplateConfig);
     }
 
