@@ -1,62 +1,126 @@
-# =Á Send Notification Library - FIAP Unified Service Core
+# üìß Send Notification Library - FIAP Unified Service Core
 
-Biblioteca para envio de notificaÁıes por email com templates HTML customiz·veis e suporte a envio assÌncrono.
+Biblioteca para envio de notifica√ß√µes por email com templates HTML customiz√°veis, suporte a envio ass√≠ncrono e **auto-configura√ß√£o autom√°tica Spring Boot**.
 
-## =Ê InstalaÁ„o
+## ‚ú® Caracter√≠sticas
+
+- ‚ö° **Zero Configura√ß√£o Manual**: Auto-configura√ß√£o autom√°tica via Spring Boot
+- üöÄ **Plug and Play**: Adicione a depend√™ncia e configure as properties - pronto!
+- üì® **Envio Ass√≠ncrono**: Emails enviados em background via `CompletableFuture`
+- üé® **Templates HTML**: Suporte completo a templates responsivos
+- üîß **Totalmente Configur√°vel**: Customize tudo via `application.yml`
+- üîí **Seguro**: Credenciais via environment variables
+- ‚úÖ **Type Safe**: DTOs com Java Records
+
+## üì¶ Instala√ß√£o
 
 ### Maven
 ```xml
 <dependency>
     <groupId>com.github.OtavioValadao</groupId>
     <artifactId>lib-send-notification</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.7</version>
 </dependency>
 ```
 
 ### Gradle
 ```gradle
-implementation 'com.github.OtavioValadao:lib-send-notification:1.4.1'
+implementation 'com.github.OtavioValadao:lib-send-notification:1.4.7'
 ```
 
-## =Ä Uso
+## üöÄ In√≠cio R√°pido
 
-### 1. ConfiguraÁ„o de Email
-
-Configure as credenciais de email no `application.yml`:
+### 1. Configure o `application.yml`
 
 ```yaml
-spring:
+notification:
+  enabled: true  # Opcional: padr√£o √© true
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME:seu-email@gmail.com}
-    password: ${MAIL_PASSWORD:sua-senha-app}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    from:
+      address: noreply@example.com
+      name: "My Application"
+    templates:
+      welcome:
+        path: template/email_welcome_content.html
+        subject: "Bem-vindo!"
+      service-order-finalized:
+        path: template/service_order_finalized_email.html
+        subject: "Sua OS est√° pronta para retirada!"
 ```
 
-**Para Gmail:**
-1. Ative a verificaÁ„o em 2 fatores na sua conta Google
-2. Gere uma "Senha de app" em: https://myaccount.google.com/apppasswords
-3. Use a senha de app gerada no campo `MAIL_PASSWORD`
+**Configura√ß√µes Opcionais:**
+```yaml
+notification:
+  mail:
+    protocol: smtp  # Padr√£o: smtp
+    default-encoding: UTF-8  # Padr√£o: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.ssl.trust: "*"
+```
 
-**Para outros provedores:**
+### 2. Configure Credenciais de Email
+
+**Para Gmail:**
+1. Ative a verifica√ß√£o em 2 fatores: https://myaccount.google.com/security
+2. Gere uma "Senha de app": https://myaccount.google.com/apppasswords
+3. Use a senha gerada como `MAIL_PASSWORD`
+
+**Outros Provedores:**
 - **Outlook/Hotmail**: `smtp.office365.com:587`
 - **Yahoo**: `smtp.mail.yahoo.com:587`
 - **SendGrid**: `smtp.sendgrid.net:587`
 - **AWS SES**: `email-smtp.us-east-1.amazonaws.com:587`
 
+### 3. Configure Vari√°veis de Ambiente
+
+```bash
+# Linux/Mac
+export MAIL_USERNAME="seu-email@gmail.com"
+export MAIL_PASSWORD="sua-senha-app"
+
+# Windows (CMD)
+set MAIL_USERNAME=seu-email@gmail.com
+set MAIL_PASSWORD=sua-senha-app
+
+# Windows (PowerShell)
+$env:MAIL_USERNAME="seu-email@gmail.com"
+$env:MAIL_PASSWORD="sua-senha-app"
+```
+
 ---
+
+## üíª Como Usar
+
+### 1. Injete o Servi√ßo
+
+**N√£o √© necess√°rio criar nenhuma configura√ß√£o manual!** A biblioteca usa auto-configura√ß√£o do Spring Boot.
+
+Simplesmente injete o `SendEmailNotification`:
+
+```java
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final SendEmailNotification emailNotification;
+
+    // Use os m√©todos diretamente!
+}
+```
 
 ### 2. Envio de Email de Boas-Vindas
 
 ```java
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final SendEmailNotification emailNotification;
@@ -65,41 +129,34 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest request) {
         User user = userService.create(request);
 
-        // Envio assÌncrono de email de boas-vindas
-        ClientDto client = new ClientDto(
+        // Envio ass√≠ncrono de email de boas-vindas
+        CustomerRecord customer = new CustomerRecord(
             user.getName(),    // nickName
             user.getEmail()    // email
         );
-        emailNotification.sendEmailWelcome(client);
+        emailNotification.sendEmailWelcome(customer);
 
         return ResponseEntity.status(201).body(userMapper.toResponse(user));
     }
 }
 ```
 
-**Template usado:** `template/email_welcome_content.html`
-
-**Vari·veis do template:**
-- `{{cliente}}` - Nome do cliente
-
-**Email enviado:**
-```
-Para: user@example.com
-Assunto: Seja muito bem vindo!!!!!
-Corpo: Email HTML estilizado com boas-vindas
-```
+**Template usado:** Configur√°vel via `notification.mail.templates.welcome.path`
+**Vari√°veis do template:** `{{cliente}}` - Nome do cliente
+**Assunto:** Configur√°vel via `notification.mail.templates.welcome.subject`
 
 ---
 
-### 3. Envio de Email de Ordem de ServiÁo Finalizada
+### 3. Envio de Email de Ordem de Servi√ßo Finalizada
 
 ```java
 @Service
+@RequiredArgsConstructor
 public class ServiceOrderService {
 
     private final SendEmailNotification emailNotification;
 
-    @LogOperation("Finalizar ordem de serviÁo")
+    @LogOperation("Finalizar ordem de servi√ßo")
     public void finalizeServiceOrder(Long orderId) {
         ServiceOrder order = serviceOrderRepository.findById(orderId)
             .orElseThrow(() -> new ResourceNotFoundException("ServiceOrder", orderId));
@@ -108,88 +165,81 @@ public class ServiceOrderService {
         order.setCompletionDate(LocalDateTime.now());
         serviceOrderRepository.save(order);
 
-        // Envio assÌncrono de email de OS finalizada
-        ServiceOrderDto orderDto = ServiceOrderDto.builder()
-            .orderNumber(order.getOrderNumber())
-            .client(new ClientDto(
+        // Envio ass√≠ncrono de email de OS finalizada
+        ServiceOrderRecord orderRecord = new ServiceOrderRecord(
+            order.getOrderNumber(),
+            new CustomerRecord(
                 order.getClient().getName(),
                 order.getClient().getEmail()
-            ))
-            .vehicleDto(new VehicleDto(
+            ),
+            new VehicleRecord(
                 order.getVehicle().getPlate(),
-                new ModelDto(
-                    order.getVehicle().getModel().getYear(),
+                new ModelRecord(
+                    order.getVehicle().getModel().getBrand(),
                     order.getVehicle().getModel().getName(),
-                    order.getVehicle().getModel().getBrand()
+                    order.getVehicle().getModel().getYear()
                 )
-            ))
-            .completionDate(order.getCompletionDate().format(
+            ),
+            order.getCompletionDate().format(
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-            ))
-            .build();
+            )
+        );
 
-        emailNotification.sendServiceOrderFinalizedEmail(orderDto);
+        emailNotification.sendServiceOrderFinalizedEmail(orderRecord);
     }
 }
 ```
 
-**Template usado:** `template/service_order_finalized_email.html`
-
-**Vari·veis do template:**
+**Template usado:** Configur√°vel via `notification.mail.templates.service-order-finalized.path`
+**Vari√°veis do template:**
 - `{{cliente}}` - Nome do cliente
-- `{{osNumero}}` - N˙mero da ordem de serviÁo
-- `{{veiculo}}` - InformaÁıes do veÌculo (marca modelo ano - placa)
-- `{{dataFinalizacao}}` - Data de finalizaÁ„o
-
-**Email enviado:**
-```
-Para: client@example.com
-Assunto: Sua OS est· pronta para retirada! - OS 12345
-Corpo: Email HTML estilizado com detalhes da OS
-```
+- `{{osNumero}}` - N√∫mero da ordem de servi√ßo
+- `{{veiculo}}` - Informa√ß√µes do ve√≠culo (marca modelo ano - placa)
+- `{{dataFinalizacao}}` - Data de finaliza√ß√£o
+**Assunto:** Configur√°vel via `notification.mail.templates.service-order-finalized.subject`
 
 ---
 
-## =› DTOs DisponÌveis
+## üìã DTOs Dispon√≠veis
 
-### ClientDto
+### CustomerRecord
 ```java
-public record ClientDto(
+public record CustomerRecord(
     String nickName,  // Nome do cliente
-    String email      // Email do destinat·rio
+    String email      // Email do destinat√°rio
 ) {}
 ```
 
-### ServiceOrderDto
+### ServiceOrderRecord
 ```java
-public record ServiceOrderDto(
-    String orderNumber,      // N˙mero da OS
-    ClientDto client,        // Dados do cliente
-    VehicleDto vehicleDto,   // Dados do veÌculo
-    String completionDate    // Data de finalizaÁ„o (formato String)
+public record ServiceOrderRecord(
+    String orderNumber,          // N√∫mero da OS
+    CustomerRecord client,       // Dados do cliente
+    VehicleRecord vehicleRecord, // Dados do ve√≠culo
+    String completionDate        // Data de finaliza√ß√£o (formato String)
 ) {}
 ```
 
-### VehicleDto
+### VehicleRecord
 ```java
-public record VehicleDto(
-    String plate,       // Placa do veÌculo
-    ModelDto model      // Modelo do veÌculo
+public record VehicleRecord(
+    String plate,        // Placa do ve√≠culo
+    ModelRecord model    // Modelo do ve√≠culo
 ) {}
 ```
 
-### ModelDto
+### ModelRecord
 ```java
-public record ModelDto(
-    Integer year,    // Ano do modelo
-    String model,    // Nome do modelo
-    String brand     // Marca
+public record ModelRecord(
+    String brand,     // Marca
+    String model,     // Nome do modelo
+    Integer year      // Ano do modelo
 ) {}
 ```
 
 ---
 
-## <® Templates HTML
+## üé® Templates HTML
 
 A biblioteca inclui 2 templates prontos para uso:
 
@@ -211,8 +261,8 @@ A biblioteca inclui 2 templates prontos para uso:
 <body>
 <div class="container">
     <h1>Bem-vindo(a), {{cliente}}!</h1>
-    <p>Estamos muito felizes em ter vocÍ conosco. <â</p>
-    <p>… um prazer contar com a sua presenÁa em nossa comunidade.</p>
+    <p>Estamos muito felizes em ter voc√™ conosco.</p>
+    <p>√â um prazer contar com a sua presen√ßa em nossa comunidade.</p>
 </div>
 </body>
 </html>
@@ -234,12 +284,12 @@ A biblioteca inclui 2 templates prontos para uso:
 </head>
 <body>
 <div class="container">
-    <h1>OS pronta para retirada <â</h1>
-    <p>Ol·, {{cliente}}!</p>
-    <p>Sua Ordem de ServiÁo <strong>{{osNumero}}</strong> foi finalizada em <strong>{{dataFinalizacao}}</strong>.</p>
+    <h1>OS pronta para retirada!</h1>
+    <p>Ol√°, {{cliente}}!</p>
+    <p>Sua Ordem de Servi√ßo <strong>{{osNumero}}</strong> foi finalizada em <strong>{{dataFinalizacao}}</strong>.</p>
     <div class="info">
-        <div><span class="label">VeÌculo:</span> {{veiculo}}</div>
-        <div><span class="label">SituaÁ„o:</span> ServiÁos concluÌdos. Aguardando retirada.</div>
+        <div><span class="label">Ve√≠culo:</span> {{veiculo}}</div>
+        <div><span class="label">Situa√ß√£o:</span> Servi√ßos conclu√≠dos. Aguardando retirada.</div>
     </div>
 </div>
 </body>
@@ -248,7 +298,7 @@ A biblioteca inclui 2 templates prontos para uso:
 
 ---
 
-## =' CustomizaÁ„o de Templates
+## üé® Customiza√ß√£o de Templates
 
 ### Criando Templates Personalizados
 
@@ -257,24 +307,47 @@ A biblioteca inclui 2 templates prontos para uso:
 ```html
 <!-- src/main/resources/template/custom_notification.html -->
 <!doctype html>
-<html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Atualiza√ß√£o de Pedido</title>
+</head>
 <body>
-    <h1>Ol·, {{nome}}!</h1>
-    <p>Seu pedido {{numeroPedido}} foi {{status}}.</p>
+    <h1>Ol√°, {{nome}}!</h1>
+    <p>Seu pedido <strong>{{numeroPedido}}</strong> foi {{status}}.</p>
     <p>Valor: R$ {{valor}}</p>
 </body>
 </html>
 ```
 
-2. **Crie um mÈtodo customizado** na classe `SendEmailNotification`:
+2. **Configure o template no `application.yml`** (opcional):
+
+```yaml
+notification:
+  mail:
+    templates:
+      welcome:
+        path: template/email_welcome_content.html
+        subject: "Bem-vindo!"
+      service-order-finalized:
+        path: template/service_order_finalized_email.html
+        subject: "Sua OS est√° pronta!"
+      # Adicione seu template customizado (se quiser usar via properties)
+      custom-notification:
+        path: template/custom_notification.html
+        subject: "Atualiza√ß√£o do Pedido"
+```
+
+3. **Crie um servi√ßo customizado** para enviar o email:
 
 ```java
-@Component
+@Service
 @RequiredArgsConstructor
 public class CustomNotificationService {
 
     private final JavaMailSender mailSender;
     private final LoadTemplateConfig loadTemplateConfig;
+    private final NotificationProperties properties;
 
     public void sendCustomNotification(String nome, String email,
                                        String numeroPedido, String status, String valor) {
@@ -289,11 +362,18 @@ public class CustomNotificationService {
                     .replace("{{valor}}", valor);
 
                 MimeMessage message = mailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                MimeMessageHelper helper = new MimeMessageHelper(
+                    message,
+                    true,
+                    properties.getMail().getDefaultEncoding()
+                );
 
-                helper.setFrom("noreply@example.com", "Minha Empresa");
+                helper.setFrom(
+                    properties.getMail().getFrom().getAddress(),
+                    properties.getMail().getFrom().getName()
+                );
                 helper.setTo(email);
-                helper.setSubject("AtualizaÁ„o do Pedido " + numeroPedido);
+                helper.setSubject("Atualiza√ß√£o do Pedido " + numeroPedido);
                 helper.setText(htmlBody, true);
 
                 mailSender.send(message);
@@ -309,91 +389,87 @@ public class CustomNotificationService {
 
 ---
 
-## ô ConfiguraÁ„o AvanÁada
+## ‚öôÔ∏è Configura√ß√£o Avan√ßada
 
-### M˙ltiplas EstratÈgias de Carregamento
+### Desabilitar a Biblioteca
 
-A classe `LoadTemplateConfig` tenta carregar templates em ordem:
-
-1. **ResourceLoader com classpath:**
-   - `classpath:template/email_welcome_content.html`
-
-2. **ClassPathResource**
-   - Busca direta no classpath
-
-3. **Thread ClassLoader**
-   - ⁄til em ambientes com m˙ltiplos classloaders
-
-4. **Class ClassLoader**
-   - Fallback final
-
-Isso garante compatibilidade com diferentes ambientes (IDE, JAR, WAR, containers).
-
----
-
-### ConfiguraÁ„o de SMTP Customizada
+Se necess√°rio, voc√™ pode desabilitar a biblioteca completamente:
 
 ```yaml
-spring:
+notification:
+  enabled: false
+```
+
+### Configura√ß√£o Completa de SMTP
+
+```yaml
+notification:
   mail:
     host: smtp.custom-provider.com
     port: 465  # Use 465 para SSL ou 587 para TLS
+    protocol: smtp
+    default-encoding: UTF-8
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
+    from:
+      address: noreply@mycompany.com
+      name: "My Company"
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: false  # Desabilite se usar SSL na porta 465
-          ssl:
-            enable: true   # Habilite SSL se usar porta 465
-        debug: false  # Habilite para debug detalhado
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: false  # false se usar SSL (porta 465)
+      mail.smtp.ssl.enable: true        # true se usar SSL (porta 465)
+      mail.smtp.ssl.trust: "*"
+      mail.debug: false  # true para logs detalhados
+    templates:
+      welcome:
+        path: template/custom_welcome.html
+        subject: "Bem-vindo √† nossa plataforma!"
+      service-order-finalized:
+        path: template/custom_order_finalized.html
+        subject: "Seu pedido foi finalizado!"
 ```
 
----
-
-### Timeout e Retry
+### Configura√ß√£o de Timeouts
 
 ```yaml
-spring:
+notification:
   mail:
     properties:
-      mail:
-        smtp:
-          timeout: 5000           # Timeout de conex„o (ms)
-          connectiontimeout: 5000 # Timeout de leitura (ms)
-          writetimeout: 5000      # Timeout de escrita (ms)
+      mail.smtp.timeout: 5000            # Timeout de conex√£o (ms)
+      mail.smtp.connectiontimeout: 5000  # Timeout de leitura (ms)
+      mail.smtp.writetimeout: 5000       # Timeout de escrita (ms)
 ```
 
+### M√∫ltiplas Estrat√©gias de Carregamento
+
+A classe `LoadTemplateConfig` carrega templates automaticamente usando m√∫ltiplas estrat√©gias:
+
+1. **ResourceLoader com classpath** - Padr√£o do Spring
+2. **ClassPathResource** - Busca direta no classpath
+3. **Thread ClassLoader** - √ötil em ambientes com m√∫ltiplos classloaders
+4. **Class ClassLoader** - Fallback final
+
+Isso garante compatibilidade com diferentes ambientes (IDE, JAR, WAR, containers Docker).
+
 ---
 
-## <Ø Features
-
-###  Recursos Principais
-
-- **Envio AssÌncrono**: Emails s„o enviados em background via `CompletableFuture`
-- **Templates HTML**: Suporte completo a templates HTML responsivos
-- **M˙ltiplas EstratÈgias**: Carregamento de templates com fallback autom·tico
-- **Zero ConfiguraÁ„o**: Auto-configuraÁ„o via Spring Boot
-- **Type Safety**: DTOs com Records do Java 17+
-- **Error Handling**: Logs de erro sem quebrar a aplicaÁ„o
-- **FlexÌvel**: F·cil customizaÁ„o de templates e tipos de notificaÁ„o
-
-### = SeguranÁa
+## üîí Seguran√ßa
 
 - **Credenciais via Environment Variables**: Use `${MAIL_USERNAME}` e `${MAIL_PASSWORD}`
-- **TLS/SSL**: Suporte a conexıes seguras
-- **SanitizaÁ„o**: Templates s„o processados de forma segura
+- **TLS/SSL**: Suporte a conex√µes seguras
+- **Sanitiza√ß√£o**: Templates s√£o processados de forma segura
+- **N√£o expor credenciais**: Nunca commite credenciais no c√≥digo ou properties
 
 ---
 
-## =  Logs
+## üìù Logs
 
 A biblioteca gera logs informativos durante o envio:
 
 ```
-INFO  - Send email notification welcome
+INFO  - üìß Creating JavaMailSender bean with auto-configuration
+INFO  - ‚úÖ JavaMailSender configured - Host: smtp.gmail.com, Port: 587
+INFO  - üöÄ [SEND-NOTIFICATION] SendEmailNotification bean created successfully
 INFO  - Welcome email sent successfully to user@example.com
 ```
 
@@ -405,28 +481,28 @@ java.lang.RuntimeException: Template file does not exist: template/missing.html
 
 ---
 
-## >Í Testes
+## üß™ Testes
 
 A biblioteca inclui suite completa de testes:
 
-**LoadTemplateConfigTest** (4 testes):
-- Carregamento de template com ResourceLoader
-- ExceÁ„o quando template n„o existe
-- Carregamento real do classpath
-- Suporte a templates multilinha
+**SendNotificationAutoConfigurationTest** (5 testes):
+- Auto-configura√ß√£o carrega corretamente
+- Beans registrados (JavaMailSender, LoadTemplateConfig, SendEmailNotification)
+- Configura√ß√£o de properties
+- Desabilita√ß√£o via `notification.enabled=false`
 
 **SendEmailNotificationTest** (5 testes):
 - Envio de email de boas-vindas
 - Envio de email de OS finalizada
-- Tratamento de email inv·lido
+- Tratamento de email inv√°lido
 - Carregamento de template
-- Tratamento de exceÁ„o no template
+- Tratamento de exce√ß√£o no template
 
-**SendNotificationAutoConfigurationTest** (5 testes):
-- Auto-configuraÁ„o carrega corretamente
-- Beans registrados
-- JavaMailSender criado
-- ConfiguraÁ„o do META-INF
+**LoadTemplateConfigTest** (4 testes):
+- Carregamento de template com ResourceLoader
+- Exce√ß√£o quando template n√£o existe
+- Carregamento real do classpath
+- Suporte a templates multilinha
 
 **Resultado:**
 ```
@@ -435,89 +511,70 @@ Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
 
 ---
 
-## =' Troubleshooting
+## üîß Troubleshooting
 
-### L Email n„o est· sendo enviado
+### ‚ùå Email n√£o est√° sendo enviado
 
-**PossÌveis causas:**
+**Poss√≠veis causas:**
 
 1. **Credenciais incorretas**
    - Verifique `MAIL_USERNAME` e `MAIL_PASSWORD`
-   - Para Gmail, use senha de app, n„o sua senha normal
+   - Para Gmail, use senha de app, n√£o sua senha normal
 
 2. **Firewall bloqueando porta**
-   - Verifique se a porta 587 (TLS) ou 465 (SSL) est· aberta
+   - Verifique se a porta 587 (TLS) ou 465 (SSL) est√° aberta
    - Teste: `telnet smtp.gmail.com 587`
 
-3. **Template n„o encontrado**
+3. **Template n√£o encontrado**
    ```
    ERROR - Template file not found: template/custom.html
    ```
    - Verifique o caminho do template
    - Templates devem estar em `src/main/resources/template/`
 
-4. **ConfiguraÁ„o de SMTP incorreta**
+4. **Configura√ß√£o de SMTP incorreta**
    ```yaml
-   # Teste com configuraÁ„o mÌnima:
-   spring:
+   # Teste com configura√ß√£o m√≠nima:
+   notification:
      mail:
        host: smtp.gmail.com
        port: 587
        username: seu-email@gmail.com
        password: sua-senha-app
        properties:
-         mail:
-           smtp:
-             auth: true
-             starttls:
-               enable: true
+         mail.smtp.auth: true
+         mail.smtp.starttls.enable: true
    ```
 
 ---
 
-### L Email chega na caixa de spam
+### ‚ùå Email chega na caixa de spam
 
-**SoluÁıes:**
+**Solu√ß√µes:**
 
-1. **Configure SPF/DKIM** no seu domÌnio
-2. **Use provedores confi·veis** (SendGrid, AWS SES, Mailgun)
+1. **Configure SPF/DKIM** no seu dom√≠nio
+2. **Use provedores confi√°veis** (SendGrid, AWS SES, Mailgun)
 3. **Adicione link de unsubscribe** nos emails
-4. **Evite palavras spam** (GR¡TIS, URGENTE, etc)
-5. **Use email remetente v·lido**
+4. **Evite palavras spam** (GR√ÅTIS, URGENTE, etc)
+5. **Use email remetente v√°lido**
 
 ---
 
-### L Templates n„o est„o sendo substituÌdos
+### ‚ùå Templates n√£o est√£o sendo substitu√≠dos
 
-Verifique se as vari·veis est„o corretas:
+Verifique se as vari√°veis est√£o corretas:
 
 ```java
-// L Errado
+// ‚ùå Errado
 String html = template.replace("{cliente}", nome);  // Faltam chaves duplas
 
-//  Correto
+// ‚úÖ Correto
 String html = template.replace("{{cliente}}", nome);
 ```
 
 ---
 
-## =À Constantes DisponÌveis
-
-```java
-// Em MailProperties.java
-public static final String FROM_NAME = "Unified Service Core";
-public static final String FROM_ADDRESS = "unifiedservicecore@gmail.com";
-public static final String WELCOME_SUBJECT = "Seja muito bem vindo!!!!!";
-public static final String WELCOME_TEMPLATE_PATH = "template/email_welcome_content.html";
-public static final String FINALIZE_TEMPLATE_PATH = "template/service_order_finalized_email.html";
-public static final String FINALIZE_SUBJECT = "Sua OS est· pronta para retirada!";
-public static final String UTF_8 = "UTF-8";
-public static final String CLIENT = "{{cliente}}";
-```
-
----
-
-## =› Exemplo Completo
+## üì¶ Exemplo Completo
 
 ```java
 @Service
@@ -528,36 +585,36 @@ public class NotificationService {
 
     // Exemplo 1: Email de boas-vindas
     public void sendWelcomeEmail(User user) {
-        ClientDto client = new ClientDto(user.getName(), user.getEmail());
-        emailNotification.sendEmailWelcome(client);
+        CustomerRecord customer = new CustomerRecord(user.getName(), user.getEmail());
+        emailNotification.sendEmailWelcome(customer);
     }
 
     // Exemplo 2: Email de OS finalizada
     public void notifyServiceOrderCompletion(ServiceOrder order) {
-        ServiceOrderDto dto = buildServiceOrderDto(order);
+        ServiceOrderRecord dto = buildServiceOrderRecord(order);
         emailNotification.sendServiceOrderFinalizedEmail(dto);
     }
 
-    private ServiceOrderDto buildServiceOrderDto(ServiceOrder order) {
-        ClientDto client = new ClientDto(
+    private ServiceOrderRecord buildServiceOrderRecord(ServiceOrder order) {
+        CustomerRecord customer = new CustomerRecord(
             order.getClient().getName(),
             order.getClient().getEmail()
         );
 
-        ModelDto model = new ModelDto(
-            order.getVehicle().getModel().getYear(),
+        ModelRecord model = new ModelRecord(
+            order.getVehicle().getModel().getBrand(),
             order.getVehicle().getModel().getName(),
-            order.getVehicle().getModel().getBrand()
+            order.getVehicle().getModel().getYear()
         );
 
-        VehicleDto vehicle = new VehicleDto(
+        VehicleRecord vehicle = new VehicleRecord(
             order.getVehicle().getPlate(),
             model
         );
 
-        return new ServiceOrderDto(
+        return new ServiceOrderRecord(
             order.getOrderNumber(),
-            client,
+            customer,
             vehicle,
             order.getCompletionDate().format(
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
@@ -569,26 +626,25 @@ public class NotificationService {
 
 ---
 
-## =ﬁ Suporte
+## üí° Suporte
 
 - **Issues**: [GitHub Issues](https://github.com/OtavioValadao/unified_service_core_libs/issues)
-- **DocumentaÁ„o**: [Wiki](https://github.com/OtavioValadao/unified_service_core_libs/wiki)
-- **Email**: notifications@fiap.com.br
+- **Documenta√ß√£o**: [Wiki](https://github.com/OtavioValadao/unified_service_core_libs/wiki)
 
 ---
 
-## =ƒ LicenÁa
+## üìÑ Licen√ßa
 
 MIT License - Copyright (c) 2025 FIAP
 
 ---
 
-## =e Autores
+## üë• Autores
 
 **FIAP - Unified Service Core Team**
-- Vers„o atual: v1.4.1
-- Data de lanÁamento: Janeiro 2025
+- Vers√£o atual: v1.4.7
+- Data de lan√ßamento: Janeiro 2025
 
 ---
 
-**<Ø Dica Final**: Configure as credenciais de email via environment variables para seguranÁa e use os templates prontos para comeÁar rapidamente! =Á=Ä
+**üí° Dica Final**: Configure as credenciais de email via environment variables para seguran√ßa. A biblioteca √© **plug-and-play** - n√£o precisa criar nenhuma configura√ß√£o manual! üéâüöÄ

@@ -1,5 +1,6 @@
 package com.fiap.libs.sendnotification.email;
 
+import com.fiap.libs.sendnotification.config.NotificationProperties;
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
 import com.fiap.libs.sendnotification.email.dto.CustomerRecord;
 import com.fiap.libs.sendnotification.email.dto.ModelRecord;
@@ -16,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import static com.fiap.libs.sendnotification.email.config.MailProperties.*;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -32,10 +32,12 @@ class SendEmailNotificationTest {
     private LoadTemplateConfig loadTemplateConfig;
 
     private SendEmailNotification sendEmailNotification;
+    private NotificationProperties properties;
 
     @BeforeEach
     void setUp() {
-        sendEmailNotification = new SendEmailNotification(mailSender, loadTemplateConfig);
+        properties = new NotificationProperties();
+        sendEmailNotification = new SendEmailNotification(mailSender, loadTemplateConfig, properties);
         when(mailSender.createMimeMessage()).thenReturn(new MimeMessage((Session) null));
     }
 
@@ -48,7 +50,7 @@ class SendEmailNotificationTest {
         );
 
         String template = "<html><body>Bem-vindo {{cliente}}!</body></html>";
-        when(loadTemplateConfig.loadTemplate(WELCOME_TEMPLATE_PATH)).thenReturn(template);
+        when(loadTemplateConfig.loadTemplate(properties.getMail().getTemplates().getWelcome().getPath())).thenReturn(template);
 
         // When
         sendEmailNotification.sendEmailWelcome(client);
@@ -58,7 +60,7 @@ class SendEmailNotificationTest {
 
         // Then
         verify(mailSender, times(1)).send(any(MimeMessage.class));
-        verify(loadTemplateConfig, times(1)).loadTemplate(WELCOME_TEMPLATE_PATH);
+        verify(loadTemplateConfig, times(1)).loadTemplate(properties.getMail().getTemplates().getWelcome().getPath());
     }
 
     @Test
@@ -88,7 +90,7 @@ class SendEmailNotificationTest {
         );
 
         String template = "<html><body>OS {{osNumero}} finalizada para {{cliente}}. Veículo: {{veiculo}}. Data: {{dataFinalizacao}}</body></html>";
-        when(loadTemplateConfig.loadTemplate(FINALIZE_TEMPLATE_PATH)).thenReturn(template);
+        when(loadTemplateConfig.loadTemplate(properties.getMail().getTemplates().getServiceOrderFinalized().getPath())).thenReturn(template);
 
         // When
         sendEmailNotification.sendServiceOrderFinalizedEmail(serviceOrder);
@@ -98,7 +100,7 @@ class SendEmailNotificationTest {
 
         // Then
         verify(mailSender, times(1)).send(any(MimeMessage.class));
-        verify(loadTemplateConfig, times(1)).loadTemplate(FINALIZE_TEMPLATE_PATH);
+        verify(loadTemplateConfig, times(1)).loadTemplate(properties.getMail().getTemplates().getServiceOrderFinalized().getPath());
     }
 
     @Test
@@ -110,7 +112,7 @@ class SendEmailNotificationTest {
         );
 
         String template = "<html><body>Bem-vindo {{cliente}}!</body></html>";
-        when(loadTemplateConfig.loadTemplate(WELCOME_TEMPLATE_PATH)).thenReturn(template);
+        when(loadTemplateConfig.loadTemplate(properties.getMail().getTemplates().getWelcome().getPath())).thenReturn(template);
 
         // When / Then - Should not throw exception, just log error
         assertThatCode(() -> sendEmailNotification.sendEmailWelcome(clientWithInvalidEmail))
@@ -129,7 +131,7 @@ class SendEmailNotificationTest {
         );
 
         String template = "<html><body>Olá {{cliente}}, seja bem-vindo!</body></html>";
-        when(loadTemplateConfig.loadTemplate(WELCOME_TEMPLATE_PATH)).thenReturn(template);
+        when(loadTemplateConfig.loadTemplate(properties.getMail().getTemplates().getWelcome().getPath())).thenReturn(template);
 
         // When
         sendEmailNotification.sendEmailWelcome(client);
@@ -138,7 +140,7 @@ class SendEmailNotificationTest {
         Thread.sleep(100);
 
         // Then
-        verify(loadTemplateConfig, times(1)).loadTemplate(WELCOME_TEMPLATE_PATH);
+        verify(loadTemplateConfig, times(1)).loadTemplate(properties.getMail().getTemplates().getWelcome().getPath());
     }
 
     @Test
@@ -149,7 +151,7 @@ class SendEmailNotificationTest {
                 "test@example.com"
         );
 
-        when(loadTemplateConfig.loadTemplate(WELCOME_TEMPLATE_PATH))
+        when(loadTemplateConfig.loadTemplate(properties.getMail().getTemplates().getWelcome().getPath()))
                 .thenThrow(new RuntimeException("Template not found"));
 
         // When / Then - Should not throw exception, just log error
