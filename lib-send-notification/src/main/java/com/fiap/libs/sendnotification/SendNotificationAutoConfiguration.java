@@ -4,20 +4,23 @@ import com.fiap.libs.sendnotification.email.SendEmailNotification;
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 
 @AutoConfiguration
+@AutoConfigureAfter(MailSenderAutoConfiguration.class)
 @Slf4j
 public class SendNotificationAutoConfiguration {
-
 
     @Bean
     @ConditionalOnMissingBean
     public LoadTemplateConfig loadTemplateConfig(ResourceLoader resourceLoader) {
+        log.debug("Creating LoadTemplateConfig bean");
         return new LoadTemplateConfig(resourceLoader);
     }
 
