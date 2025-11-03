@@ -9,14 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
-
 import java.util.concurrent.CompletableFuture;
 
 import static com.fiap.libs.sendnotification.email.config.MailProperties.*;
 
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class SendEmailNotification {
