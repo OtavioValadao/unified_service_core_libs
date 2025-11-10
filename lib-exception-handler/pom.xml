@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.github.OtavioValadao</groupId>
         <artifactId>unified-service-core-libs</artifactId>
-        <version>1.4.8</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

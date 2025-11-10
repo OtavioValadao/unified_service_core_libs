@@ -36,8 +36,6 @@ public class SendNotificationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public JavaMailSender javaMailSender(NotificationProperties properties) {
-        log.info("📧 Creating JavaMailSender bean with auto-configuration");
-
         NotificationProperties.MailConfig config = properties.getMail();
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -65,7 +63,6 @@ public class SendNotificationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public LoadTemplateConfig loadTemplateConfig(ResourceLoader resourceLoader) {
-        log.debug("📄 Creating LoadTemplateConfig bean");
         return new LoadTemplateConfig(resourceLoader);
     }
 
