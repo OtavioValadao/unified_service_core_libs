@@ -21,6 +21,7 @@
         <module>lib-code-gen</module>
         <module>lib-send-notification</module>
         <module>lib-pdf-generator</module>
+        <module>lib-use-case-base</module>
     </modules>
 
     <!-- ====================== PROPRIEDADES ====================== -->
