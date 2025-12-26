@@ -22,12 +22,13 @@
         <module>lib-send-notification</module>
         <module>lib-pdf-generator</module>
         <module>lib-use-case-base</module>
+        <module>lib-soft-delete</module>
     </modules>
 
     <!-- ====================== PROPRIEDADES ====================== -->
     <properties>
 
-        <revision>1.5.2</revision>
+        <revision>1.5.3</revision>
 
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
