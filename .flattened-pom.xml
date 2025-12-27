@@ -8,7 +8,7 @@
 
     <groupId>com.github.OtavioValadao</groupId>
     <artifactId>unified-service-core-libs</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <packaging>pom</packaging>
 
     <name>Unified Service Core Libraries</name>
@@ -21,12 +21,14 @@
         <module>lib-code-gen</module>
         <module>lib-send-notification</module>
         <module>lib-pdf-generator</module>
+        <module>lib-use-case-base</module>
+        <module>lib-soft-delete</module>
     </modules>
 
     <!-- ====================== PROPRIEDADES ====================== -->
     <properties>
 
-        <revision>1.5.1</revision>
+        <revision>1.5.3</revision>
 
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
