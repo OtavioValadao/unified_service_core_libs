@@ -41,7 +41,6 @@ import java.time.LocalDateTime;
  * @since 1.5.2
  */
 @Slf4j
-@Component
 public class SoftDeleteHelper {
     
     /**
