@@ -17,10 +17,6 @@
     <name>Observability Library</name>
     <description>Biblioteca para logging e aspectos de observabilidade em controllers e services</description>
 
-    <properties>
-        <spring-boot-starter-aop.version>${spring.boot.version}</spring-boot-starter-aop.version>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot -->
         <dependency>
@@ -32,7 +28,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-            <version>${spring-boot-starter-aop.version}</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
 
