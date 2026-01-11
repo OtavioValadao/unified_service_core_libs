@@ -36,6 +36,15 @@ public class OpenAPIConfig {
     @Value("${springdoc.api-docs.path:/v3/api-docs}")
     private String apiDocsPath;
 
+    @Value("${springdoc.security.enabled:true}")
+    private boolean securityEnabled;
+
+    @Value("${springdoc.security.scheme-name:BearerAuth}")
+    private String securitySchemeName;
+
+    @Value("${springdoc.security.description:JWT token for authentication. Available roles: ROLE_MASTER (Full access), ROLE_ADMINISTRATOR (Administrative access), ROLE_CUSTOMER (Limited access)}")
+    private String securityDescription;
+
     public OpenAPIConfig(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
@@ -65,18 +74,26 @@ public class OpenAPIConfig {
             openAPI.setServers(buildServers(null));
         }
 
-        // Sempre configurar segurança BearerAuth
-        openAPI.setComponents(new Components()
-                .addSecuritySchemes("BearerAuth", new SecurityScheme()
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-                        .description("JWT token for authentication. Available roles:\n" +
-                                "- **ROLE_MASTER**: Full access to all endpoints\n" +
-                                "- **ROLE_ADMINISTRATOR**: Administrative access\n" +
-                                "- **ROLE_USER**: Limited access (view only)")));
-        
-        openAPI.addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
+        // Configurar segurança BearerAuth apenas se habilitada
+        if (securityEnabled) {
+            Components components = openAPI.getComponents();
+            if (components == null) {
+                components = new Components();
+                openAPI.setComponents(components);
+            }
+            
+            components.addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("bearer")
+                    .bearerFormat("JWT")
+                    .description(securityDescription));
+            
+            openAPI.addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
+            
+            log.info("🔐 [CODE-GEN] Security scheme '{}' enabled in OpenAPI", securitySchemeName);
+        } else {
+            log.info("🔓 [CODE-GEN] Security disabled in OpenAPI configuration");
+        }
 
         return openAPI;
     }

@@ -2,6 +2,8 @@ package com.fiap.libs.codegen.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Import;
 
 /**
  * Auto-configuração da biblioteca de geração de código
@@ -9,6 +11,8 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
  */
 @AutoConfiguration
 @Slf4j
+@ConditionalOnClass(name = "io.swagger.v3.oas.models.OpenAPI")
+@Import(OpenAPIConfig.class)
 public class CodeGenAutoConfiguration {
 
     public CodeGenAutoConfiguration() {

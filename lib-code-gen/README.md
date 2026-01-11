@@ -238,6 +238,44 @@ sua-api/
 ```
 
 
+## 🔐 Configuração de Segurança no Swagger UI
+
+A biblioteca configura automaticamente o esquema de autenticação BearerAuth no Swagger UI. Você pode controlar isso através de propriedades:
+
+### Habilitar/Desabilitar Autenticação
+
+```yaml
+# application.yml
+springdoc:
+  security:
+    enabled: true  # true = mostra botão de autenticação (padrão) | false = desabilita
+    scheme-name: BearerAuth  # Nome do esquema de segurança (padrão: BearerAuth)
+    description: "JWT token para autenticação..."  # Descrição customizada (opcional)
+```
+
+**Exemplo: Projeto sem autenticação**
+```yaml
+springdoc:
+  security:
+    enabled: false  # Remove o botão de autenticação do Swagger UI
+```
+
+**Exemplo: Projeto com autenticação customizada**
+```yaml
+springdoc:
+  security:
+    enabled: true
+    scheme-name: ApiKeyAuth
+    description: "API Key authentication"
+```
+
+### Como Funciona
+
+- **Por padrão**, a autenticação está **habilitada** (`enabled: true`)
+- A biblioteca detecta automaticamente o `context-path` e `port` do servidor
+- Carrega informações do `swagger.yaml` se disponível
+- Configura servidores dinamicamente com base nas configurações do Spring Boot
+
 ## 🔧 Troubleshooting
 
 **Erro: package org.hibernate.validator.constraints does not exist**
@@ -262,7 +300,12 @@ mvn clean compile
 - IntelliJ: Botão direito em `target/generated-sources/openapi` → Mark Directory as → Generated Sources Root
 - Eclipse: Properties → Java Build Path → Add Folder → `target/generated-sources/openapi`
 
+**Botão de autenticação não aparece no Swagger UI**
+- Verifique se `springdoc.security.enabled=true` (padrão)
+- Certifique-se de que a lib-code-gen está no classpath
+- Reinicie a aplicação após alterar as configurações
+
 ---
 
-**Versão:** 1.0.15
-**Repositório:** [github.com/OtavioValadao/lib-code-gen](https://github.com/OtavioValadao/lib-code-gen)
+**Versão:** 1.5.10
+**Repositório:** [github.com/OtavioValadao/unified-service-core-libs](https://github.com/OtavioValadao/unified-service-core-libs)
