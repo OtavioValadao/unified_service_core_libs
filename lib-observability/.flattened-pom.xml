@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.github.OtavioValadao</groupId>
         <artifactId>unified-service-core-libs</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.11</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -27,7 +27,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
             <scope>provided</scope>
         </dependency>
 
