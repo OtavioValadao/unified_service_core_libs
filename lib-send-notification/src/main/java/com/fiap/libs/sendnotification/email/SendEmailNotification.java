@@ -4,6 +4,7 @@ import com.fiap.libs.observability.annotation.LogOperation;
 import com.fiap.libs.sendnotification.config.NotificationProperties;
 import com.fiap.libs.sendnotification.email.config.LoadTemplateConfig;
 import com.fiap.libs.sendnotification.email.dto.CustomerRecord;
+import com.fiap.libs.sendnotification.email.dto.ServiceOrderApprovalRecord;
 import com.fiap.libs.sendnotification.email.dto.ServiceOrderRecord;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -102,6 +103,52 @@ public class SendEmailNotification {
             } catch (Exception e) {
                 log.error("Error when sending Service Order finalized email for OS {}: {}",
                         serviceOrder.orderNumber(),
+                        e.getMessage(),
+                        e);
+            }
+        });
+    }
+
+    @LogOperation("Send service order approval email")
+    public void sendServiceOrderApprovalEmail(ServiceOrderApprovalRecord serviceOrderApproval) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                var client = serviceOrderApproval.client();
+                var approvalConfig = properties.getMail().getTemplates().getServiceOrderApproval();
+
+                String htmlBody = loadTemplateConfig.loadTemplate(approvalConfig.getPath());
+
+                htmlBody = htmlBody
+                        .replace("{{cliente}}", client.nickName())
+                        .replace("{{osNumero}}", serviceOrderApproval.orderNumber())
+                        .replace("{{veiculo}}", serviceOrderApproval.vehicleInfo() != null ? serviceOrderApproval.vehicleInfo() : "Veículo")
+                        .replace("{{urlAprovar}}", serviceOrderApproval.approvalUrl())
+                        .replace("{{urlRecusar}}", serviceOrderApproval.rejectionUrl());
+
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(
+                        message,
+                        true,
+                        properties.getMail().getDefaultEncoding()
+                );
+
+                helper.setFrom(
+                        properties.getMail().getFrom().getAddress(),
+                        properties.getMail().getFrom().getName()
+                );
+                helper.setTo(serviceOrderApproval.client().email());
+                helper.setSubject(approvalConfig.getSubject() + " - OS " + serviceOrderApproval.orderNumber());
+                helper.setText(htmlBody, true);
+
+                mailSender.send(message);
+
+                log.info("Service order approval email sent successfully to {} for OS {}",
+                        serviceOrderApproval.client().email(),
+                        serviceOrderApproval.orderNumber());
+
+            } catch (Exception e) {
+                log.error("Error when sending Service Order approval email for OS {}: {}",
+                        serviceOrderApproval.orderNumber(),
                         e.getMessage(),
                         e);
             }

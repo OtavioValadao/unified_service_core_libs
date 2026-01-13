@@ -118,6 +118,14 @@ public class NotificationProperties {
                     "Your order is ready for pickup!"
             );
 
+            /**
+             * Service order approval email template configuration.
+             */
+            private EmailTemplate serviceOrderApproval = new EmailTemplate(
+                    "templates/service_order_approval_email.html",
+                    "Sua OS está aguardando aprovação!"
+            );
+
             @Data
             public static class EmailTemplate {
                 /**
